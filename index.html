@@ -1,102 +1,742 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SmartDeals254</title><!-- GOOGLE FONT --><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"><style>
-body{font-family:'Poppins',sans-serif;margin:0;background:#0f0f0f;color:#fff;}
-header{padding:15px;text-align:center;font-size:22px;font-weight:600;background:#000;letter-spacing:1px;}
-.container{padding:15px;}
-input{width:100%;padding:12px;margin:6px 0;border-radius:12px;border:none;outline:none;}
-button{padding:12px;background:#ff3c3c;color:#fff;border:none;border-radius:12px;width:100%;cursor:pointer;font-weight:600;}
-.products{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:15px;margin-top:20px;}
-.card{background:#1a1a1a;padding:10px;border-radius:16px;text-align:center;transition:0.3s;transform:scale(0.95);opacity:0;animation:fadeIn 0.6s forwards;}
-.card:hover{transform:scale(1.03);}
-.card img{width:100%;height:120px;object-fit:cover;border-radius:12px;}
-.btn{display:inline-block;margin-top:10px;padding:8px 12px;background:#ff3c3c;color:white;border-radius:10px;text-decoration:none;font-size:14px;}
-.admin{display:none;background:#111;padding:10px;border-radius:12px;margin-top:10px;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>SmartDeals254 • Affiliate Store</title>
+  <!-- Optional Google Fonts for clean typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-/* ANIMATIONS */
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(20px) scale(0.9);} 
-  to{opacity:1;transform:translateY(0) scale(1);} 
-}
+    html {
+      scroll-behavior: smooth;
+    }
 
-.glow{
-  animation:glow 2s infinite alternate;
-}
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0b0b0c;
+      color: #ededee;
+      line-height: 1.5;
+      min-height: 100vh;
+      padding-bottom: 2rem;
+    }
 
-@keyframes glow{
-  from{box-shadow:0 0 5px #ff3c3c;} 
-  to{box-shadow:0 0 20px #ff3c3c;} 
-}
+    /* Modern dark theme, mobile-first */
+    .app {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
 
-</style></head>
-<body><header class="glow">🔥 SmartDeals254</header><div class="container"><input type="text" id="search" placeholder="Search products..." onkeyup="searchProduct()"><button onclick="toggleAdmin()">🔐 Admin Panel</button>
+    /* ----- STICKY HEADER with glow animation ----- */
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(10, 10, 12, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid #2a2a2e;
+      padding: 0.75rem 0;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    }
 
-<div class="admin" id="adminPanel">
-<h3>Add Product</h3>
-<input type="text" id="name" placeholder="Product Name">
-<input type="text" id="price" placeholder="Price">
-<input type="text" id="image" placeholder="Image URL">
-<input type="text" id="link" placeholder="Affiliate Link">
-<button onclick="addProduct()">Add Product</button>
-</div><div class="products" id="productList"></div></div><script>
-let adminOpen=false;
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
 
-function toggleAdmin(){
-  let pass=prompt("Enter admin password:");
-  if(pass==="2540"){
-    adminOpen=!adminOpen;
-    document.getElementById('adminPanel').style.display=adminOpen?'block':'none';
-  }else{
-    alert("Wrong password");
-  }
-}
+    .site-title {
+      font-size: 1.9rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 0%, #b0f0ff 80%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 18px rgba(0, 255, 255, 0.5);
+      animation: titlePulse 3s infinite alternate;
+    }
 
-function addProduct(){
-  let name=document.getElementById('name').value;
-  let price=document.getElementById('price').value;
-  let image=document.getElementById('image').value;
-  let link=document.getElementById('link').value;
+    @keyframes titlePulse {
+      0% { text-shadow: 0 0 8px #0cf, 0 0 20px #0cf3; }
+      100% { text-shadow: 0 0 16px #0ff, 0 0 32px #0ffa; }
+    }
 
-  if(!name||!link){alert('Add name and link');return;}
+    .admin-btn {
+      background: #1e1e22;
+      border: 1px solid #3a3a44;
+      color: #ccc;
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
 
-  let product={name,price,image,link};
+    .admin-btn:hover {
+      background: #2c2c36;
+      border-color: #5ae4ff;
+      color: white;
+      box-shadow: 0 0 12px #0cf3;
+      transform: scale(1.02);
+    }
 
-  let products=JSON.parse(localStorage.getItem('products')||'[]');
-  products.unshift(product);
-  localStorage.setItem('products',JSON.stringify(products));
+    /* search bar */
+    .search-wrapper {
+      margin: 1rem 0 1.8rem;
+    }
 
-  displayProducts();
-}
+    .search-input {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      background: #15161a;
+      border: 1.5px solid #2c2e36;
+      border-radius: 60px;
+      font-size: 1.1rem;
+      color: #f0f0f0;
+      outline: none;
+      transition: all 0.25s;
+      box-shadow: 0 6px 14px #00000030;
+    }
 
-function displayProducts(){
-  let list=document.getElementById('productList');
-  list.innerHTML='';
+    .search-input:focus {
+      border-color: #2ad4ff;
+      box-shadow: 0 0 18px #00c8ff40, 0 6px 14px #000;
+      background: #1a1c23;
+    }
 
-  let products=JSON.parse(localStorage.getItem('products')||'[]');
+    .search-input::placeholder {
+      color: #7e7e8f;
+      font-weight: 400;
+    }
 
-  products.forEach((p,i)=>{
-    list.innerHTML+=`\
-    <div class="card" style="animation-delay:${i*0.05}s">\
-      <img src="${p.image||'https://via.placeholder.com/150'}">\
-      <h4>${p.name}</h4>\
-      <p>${p.price||''}</p>\
-      <a href="${p.link}" class="btn" target="_blank">Buy Now</a>\
-    </div>`;
-  });
-}
+    /* section headings */
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.7rem;
+      font-weight: 600;
+      margin: 2rem 0 1.2rem;
+      letter-spacing: -0.01em;
+    }
 
-function searchProduct(){
-  let input=document.getElementById('search').value.toLowerCase();
-  let cards=document.getElementsByClassName('card');
+    .section-title span {
+      background: #ff5722;
+      padding: 0.2rem 0.9rem;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #fff;
+      text-transform: uppercase;
+    }
 
-  for(let i=0;i<cards.length;i++){
-    let title=cards[i].getElementsByTagName('h4')[0].innerText.toLowerCase();
-    cards[i].style.display=title.includes(input)?'block':'none';
-  }
-}
+    /* product grid — responsive */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1.2rem;
+    }
 
-window.onload=displayProducts;
-</script></body>
-</html>
+    @media (min-width: 640px) {
+      .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+      }
+    }
+
+    /* Product Card — smooth animations */
+    .product-card {
+      background: #18191e;
+      border-radius: 24px;
+      padding: 1rem;
+      box-shadow: 0 18px 30px -8px #00000080, 0 0 0 1px #2a2c33 inset;
+      transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1);
+      display: flex;
+      flex-direction: column;
+      animation: cardFadeIn 0.5s ease-out;
+      border: 1px solid #2a2c33;
+    }
+
+    @keyframes cardFadeIn {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .product-card:hover {
+      transform: scale(1.02) translateY(-4px);
+      box-shadow: 0 24px 38px -12px #000, 0 0 0 1px #4ae6ff inset;
+      border-color: #3fcbff;
+      background: #1e2028;
+    }
+
+    .card-img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 18px;
+      background: #252830;
+      border: 1px solid #3a3e4a;
+      transition: opacity 0.3s;
+    }
+
+    .product-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin: 0.75rem 0 0.2rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .product-price {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #b6f0ff;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.02em;
+    }
+
+    .buy-btn {
+      background: #0cf;
+      border: none;
+      color: #0a0c0f;
+      font-weight: 700;
+      padding: 0.8rem 0.5rem;
+      border-radius: 60px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: auto;
+      transition: 0.2s;
+      box-shadow: 0 6px 14px #00a6ff40;
+      border: 1px solid #a0e0ff;
+      text-align: center;
+    }
+
+    .buy-btn:hover {
+      background: #6ee4ff;
+      box-shadow: 0 0 20px #0cf, 0 6px 14px #0cf6;
+      transform: scale(1.02);
+      color: #000;
+    }
+
+    /* hot badge */
+    .hot-badge {
+      position: relative;
+    }
+    .hot-badge::after {
+      content: "🔥 HOT";
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: #e03a3a;
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.7rem;
+      border-radius: 40px;
+      box-shadow: 0 4px 10px #ff000070;
+      backdrop-filter: blur(4px);
+      letter-spacing: 0.3px;
+      z-index: 5;
+    }
+
+    /* Admin panel — hidden by default */
+    .admin-panel {
+      background: #131418;
+      border-radius: 32px;
+      padding: 1.5rem;
+      margin: 2rem 0 1rem;
+      border: 1px solid #3f4455;
+      box-shadow: 0 20px 30px #00000080;
+      backdrop-filter: blur(8px);
+      display: none;
+      animation: panelFade 0.3s;
+    }
+
+    @keyframes panelFade {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.8rem;
+    }
+
+    .admin-header h3 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #b3edff;
+    }
+
+    .close-admin {
+      background: none;
+      border: 1px solid #4a4f60;
+      color: #ddd;
+      font-size: 1.8rem;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+    }
+    .close-admin:hover {
+      background: #2e323e;
+      border-color: #ff5e5e;
+      color: #ffb0b0;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: 500;
+      color: #b0b6cc;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      background: #0d0e12;
+      border: 1.5px solid #353b48;
+      border-radius: 20px;
+      font-size: 1rem;
+      color: white;
+      outline: none;
+    }
+    .form-group input:focus {
+      border-color: #0cf;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: #0cf;
+      border: none;
+      padding: 0.9rem 1.8rem;
+      border-radius: 60px;
+      font-weight: 700;
+      color: #000;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 0 12px #0cf6;
+    }
+    .btn-primary:hover {
+      background: #7ae2ff;
+      box-shadow: 0 0 22px #0cf;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid #4b5266;
+      color: #ddd;
+      padding: 0.9rem 1.8rem;
+      border-radius: 60px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-outline:hover {
+      background: #272b36;
+      border-color: #0cf;
+    }
+
+    .product-manage-list {
+      margin-top: 2rem;
+      max-height: 280px;
+      overflow-y: auto;
+      background: #0e0f14;
+      border-radius: 24px;
+      padding: 0.5rem;
+    }
+    .manage-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #1a1c24;
+      padding: 0.7rem 1.2rem;
+      border-radius: 40px;
+      margin-bottom: 0.5rem;
+    }
+    .manage-item span {
+      font-weight: 500;
+    }
+    .delete-btn {
+      background: #3d1e1e;
+      border: 1px solid #b55;
+      color: #ffb0b0;
+      padding: 0.3rem 1rem;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .delete-btn:hover {
+      background: #a13333;
+      color: white;
+    }
+
+    .empty-message {
+      text-align: center;
+      padding: 2.5rem;
+      color: #8a8faa;
+      font-size: 1.1rem;
+    }
+
+    .footer-note {
+      margin-top: 3rem;
+      text-align: center;
+      opacity: 0.5;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <!-- Sticky header with glowing site name -->
+  <div class="sticky-header">
+    <div class="header-row">
+      <div class="site-title">SmartDeals254</div>
+      <button class="admin-btn" id="adminToggleBtn">⚙️ Admin</button>
+    </div>
+  </div>
+
+  <!-- Live search bar -->
+  <div class="search-wrapper">
+    <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search products..." autocomplete="off">
+  </div>
+
+  <!-- 🔥 Hot Deals Section (Trending) -->
+  <div class="section-title">
+    🔥 Hot Deals <span>Trending</span>
+  </div>
+  <div id="hotDealsGrid" class="product-grid"></div>
+
+  <!-- All Products Section -->
+  <div class="section-title" style="margin-top: 2.5rem;">
+    🛍️ All Products
+  </div>
+  <div id="allProductsGrid" class="product-grid"></div>
+
+  <!-- ADMIN PANEL (hidden, password protected) -->
+  <div id="adminPanel" class="admin-panel">
+    <div class="admin-header">
+      <h3>🛠️ Admin Panel</h3>
+      <button class="close-admin" id="closeAdminBtn" aria-label="Close">✕</button>
+    </div>
+    <div style="margin-bottom: 1rem; color: #aac8ff;">Add new affiliate product</div>
+    <form id="addProductForm">
+      <div class="form-group">
+        <label>Product name</label>
+        <input type="text" id="prodName" placeholder="e.g., Wireless Earbuds" required>
+      </div>
+      <div class="form-group">
+        <label>Price (KSh or $)</label>
+        <input type="text" id="prodPrice" placeholder="e.g., 2,499 KSh" required>
+      </div>
+      <div class="form-group">
+        <label>Image URL (optional)</label>
+        <input type="text" id="prodImage" placeholder="https://... (or leave empty)">
+      </div>
+      <div class="form-group">
+        <label>Affiliate link</label>
+        <input type="text" id="prodLink" placeholder="https://..." required>
+      </div>
+      <div class="admin-actions">
+        <button type="submit" class="btn-primary">➕ Add Product</button>
+        <button type="button" id="logoutAdminBtn" class="btn-outline">🔒 Close Panel</button>
+      </div>
+    </form>
+
+    <!-- Manage existing products (delete) -->
+    <div style="margin-top: 1.8rem;">
+      <h4 style="margin-bottom: 0.8rem;">📦 Manage products</h4>
+      <div id="adminProductList" class="product-manage-list">
+        <!-- dynamic list will be injected -->
+      </div>
+    </div>
+    <p style="margin-top: 1rem; font-size: 0.8rem; color: #7c839e;">Changes saved automatically.</p>
+  </div>
+
+  <div class="footer-note">SmartDeals254 — Best affiliate picks</div>
+</div>
+
+<script>
+  (function(){
+    "use strict";
+
+    // ---------- PASSWORD (simple, client-side) ----------
+    const ADMIN_PASSWORD = "smart254";  // change if desired
+
+    // ---------- GLOBAL STATE ----------
+    let products = [];
+    let adminLoggedIn = false;
+    
+    // DOM elements
+    const hotGrid = document.getElementById('hotDealsGrid');
+    const allGrid = document.getElementById('allProductsGrid');
+    const searchInput = document.getElementById('searchInput');
+    const adminPanel = document.getElementById('adminPanel');
+    const adminToggleBtn = document.getElementById('adminToggleBtn');
+    const closeAdminBtn = document.getElementById('closeAdminBtn');
+    const logoutAdminBtn = document.getElementById('logoutAdminBtn');
+    const addProductForm = document.getElementById('addProductForm');
+    const adminProductList = document.getElementById('adminProductList');
+
+    // inputs
+    const prodName = document.getElementById('prodName');
+    const prodPrice = document.getElementById('prodPrice');
+    const prodImage = document.getElementById('prodImage');
+    const prodLink = document.getElementById('prodLink');
+
+    // ---------- PLACEHOLDER SVG (dark, modern) ----------
+    const PLACEHOLDER_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%2322252b'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23848a9c' font-family='Inter, sans-serif' font-size='18'%3E📷 No image%3C/text%3E%3C/svg%3E";
+
+    // ---------- DEFAULT PRODUCTS (affiliate samples) ----------
+    const DEFAULT_PRODUCTS = [
+      { id: '1', name: 'Sony WH-1000XM5', price: '29,999 KSh', imageUrl: '', affiliateLink: 'https://example.com/sony-deal' },
+      { id: '2', name: 'JBL Flip 6 Speaker', price: '12,499 KSh', imageUrl: '', affiliateLink: 'https://example.com/jbl-flip6' },
+      { id: '3', name: 'Anker PowerCore 20K', price: '4,999 KSh', imageUrl: '', affiliateLink: 'https://example.com/anker' },
+      { id: '4', name: 'iPhone 15 Pro Case', price: '2,799 KSh', imageUrl: '', affiliateLink: 'https://example.com/case' },
+      { id: '5', name: 'Xiaomi Smart Band 8', price: '5,499 KSh', imageUrl: '', affiliateLink: 'https://example.com/miband' },
+    ];
+
+    // ---------- LOAD / INIT ----------
+    function loadProducts() {
+      const stored = localStorage.getItem('smartdeals_products');
+      if (stored) {
+        try {
+          products = JSON.parse(stored);
+          if (!Array.isArray(products) || products.length === 0) throw new Error('Empty');
+        } catch (e) {
+          products = [...DEFAULT_PRODUCTS];
+        }
+      } else {
+        products = [...DEFAULT_PRODUCTS];
+      }
+      saveProducts();
+    }
+
+    function saveProducts() {
+      localStorage.setItem('smartdeals_products', JSON.stringify(products));
+    }
+
+    // ---------- RENDER: hot deals (first 4) + all (filtered) ----------
+    function renderAll() {
+      const term = searchInput.value.trim().toLowerCase();
+      
+      // filter products by name
+      const filtered = products.filter(p => p.name.toLowerCase().includes(term));
+      
+      // Hot Deals: first 4 products (ignore search? we show top 4 of ALL, but can also be filtered? 
+      // Better show top 4 of ALL products for consistency, independent of search.
+      const hotProducts = products.slice(0, 4);
+      
+      renderGrid(hotGrid, hotProducts, true);
+      renderGrid(allGrid, filtered, false);
+      
+      // Also update admin list if panel is open
+      if (adminLoggedIn) {
+        renderAdminProductList();
+      }
+    }
+
+    function renderGrid(container, items, isHotSection = false) {
+      if (!container) return;
+      if (items.length === 0) {
+        container.innerHTML = `<div class="empty-message" style="grid-column:1/-1;">✨ No products found</div>`;
+        return;
+      }
+      
+      let html = '';
+      items.forEach(prod => {
+        const imageSrc = prod.imageUrl && prod.imageUrl.trim() !== '' ? prod.imageUrl : PLACEHOLDER_SVG;
+        const hotClass = isHotSection ? 'hot-badge' : '';
+        html += `
+          <div class="product-card ${hotClass}">
+            <img class="card-img" src="${imageSrc}" alt="${escapeHtml(prod.name)}" loading="lazy"
+                 onerror="this.onerror=null; this.src='${PLACEHOLDER_SVG}';">
+            <div class="product-name">${escapeHtml(prod.name)}</div>
+            <div class="product-price">${escapeHtml(prod.price)}</div>
+            <button class="buy-btn" data-link="${escapeHtml(prod.affiliateLink)}">Buy Now →</button>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+      
+      // attach buy now events
+      container.querySelectorAll('.buy-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const link = btn.dataset.link;
+          if (link && link !== '#') {
+            window.open(link, '_blank', 'noopener');
+          } else {
+            alert('Affiliate link not available.');
+          }
+        });
+      });
+    }
+
+    // simple escape
+    function escapeHtml(text) {
+      if (!text) return '';
+      return String(text).replace(/[&<>"]/g, function(c) {
+        if (c === '&') return '&amp;';
+        if (c === '<') return '&lt;';
+        if (c === '>') return '&gt;';
+        if (c === '"') return '&quot;';
+        return c;
+      });
+    }
+
+    // ---------- ADMIN PANEL TOGGLE ----------
+    function showAdminPanel(show) {
+      if (show) {
+        adminPanel.style.display = 'block';
+        adminLoggedIn = true;
+        renderAdminProductList();
+      } else {
+        adminPanel.style.display = 'none';
+        adminLoggedIn = false;
+      }
+    }
+
+    function promptPasswordAndShow() {
+      const pwd = prompt('🔐 Enter admin password:');
+      if (pwd === ADMIN_PASSWORD) {
+        showAdminPanel(true);
+      } else if (pwd !== null) {
+        alert('Incorrect password.');
+      }
+    }
+
+    // render the management list inside admin panel
+    function renderAdminProductList() {
+      if (!adminProductList) return;
+      if (products.length === 0) {
+        adminProductList.innerHTML = '<div style="padding:1rem;color:#aaa;">No products yet.</div>';
+        return;
+      }
+      let listHtml = '';
+      products.forEach(prod => {
+        listHtml += `
+          <div class="manage-item">
+            <span>${escapeHtml(prod.name)} (${escapeHtml(prod.price)})</span>
+            <button class="delete-btn" data-id="${prod.id}">🗑️ Delete</button>
+          </div>
+        `;
+      });
+      adminProductList.innerHTML = listHtml;
+      
+      // attach delete events
+      adminProductList.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = btn.dataset.id;
+          deleteProductById(id);
+        });
+      });
+    }
+
+    function deleteProductById(id) {
+      products = products.filter(p => p.id !== id);
+      saveProducts();
+      renderAll();
+      if (adminLoggedIn) renderAdminProductList();
+    }
+
+    // ---------- ADD PRODUCT ----------
+    function addProduct(event) {
+      event.preventDefault();
+      const name = prodName.value.trim();
+      const price = prodPrice.value.trim();
+      const imageUrl = prodImage.value.trim();
+      const affiliateLink = prodLink.value.trim();
+      
+      if (!name || !price || !affiliateLink) {
+        alert('Please fill product name, price and affiliate link.');
+        return;
+      }
+      
+      const newProduct = {
+        id: Date.now() + '' + Math.floor(Math.random()*1000),
+        name: name,
+        price: price,
+        imageUrl: imageUrl,
+        affiliateLink: affiliateLink
+      };
+      
+      products.push(newProduct);
+      saveProducts();
+      renderAll();
+      
+      // reset form
+      addProductForm.reset();
+      // scroll to admin panel
+      adminPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ---------- EVENT LISTENERS ----------
+    function init() {
+      loadProducts();
+      renderAll();
+      
+      // Search live filtering
+      searchInput.addEventListener('input', () => {
+        renderAll();
+      });
+      
+      // Admin toggle (prompt password)
+      adminToggleBtn.addEventListener('click', () => {
+        if (adminLoggedIn) {
+          // if already logged in, just show panel (maybe it was hidden)
+          showAdminPanel(true);
+        } else {
+          promptPasswordAndShow();
+        }
+      });
+      
+      // Close admin panel
+      const hidePanel = () => showAdminPanel(false);
+      closeAdminBtn.addEventListener('click', hidePanel);
+      logoutAdminBtn.addEventListener('click', hidePanel);
+      
+      // Add product form
+      addProductForm.addEventListener('submit', addProduct);
+      
+      // Extra: click on admin button when panel open doesn't re-prompt? we keep as is.
+      
+      // smooth hover already in CSS
+    }
+
+    // Start everything
+    init();
+    
+    // Also provide global delete function used by delete buttons
+    window.deleteProductById = deleteProductById;
+  })();
+</script>
+</body>
+  </html>
